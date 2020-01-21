@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Ramona",
+        "repositoryURL": "https://github.com/jemmons/Ramona",
+        "state": {
+          "branch": "master",
+          "revision": "6c88e1876d86d6f0f37e1acde755b72e25fa52eb",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
