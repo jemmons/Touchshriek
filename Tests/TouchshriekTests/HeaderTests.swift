@@ -5,8 +5,8 @@ import Touchshriek
 
 class HeaderTests: XCTestCase {
   func testHeader() {
-    let data = Header(type: .multiTrackSequence, trackCount: 7, division: .metrical(ticksPerQuarterNote: 480)).data
-    print(data.map { String(format: "%02hhX", $0) }.joined())
-
+    let subject = Header(type: .multiTrackSequence, trackCount: 7, division: .metrical(ticksPerQuarterNote: 480))
+    let output = Data([0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x07, 0x01, 0xE0])
+    XCTAssertEqual(subject.data, output)
   }
 }
