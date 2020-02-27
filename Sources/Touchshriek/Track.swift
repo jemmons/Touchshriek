@@ -12,7 +12,7 @@ public struct Track: Chunk {
   private let midiStream: Data
   
   
-  public init(packetHash: PacketHash) {
+  public init(packetHash: TrackableHash) {
     let sortedTimeStamps = packetHash.keys.sorted()
     var runningTimeStamp = RunningDelta(initial: MIDITimeStamp.zero)
     
@@ -20,11 +20,11 @@ public struct Track: Chunk {
       (packetHash[timeStamp] ?? []).map { message in
         let delta = runningTimeStamp.delta(to: timeStamp)
         let vlq = VariableLengthQuantity(Int(delta))
-        return (delta: vlq, message: message)
+        return (delta: vlq, trackData: message.trackData)
       }
     }.reduce(into: Data()) { acc, next in
       acc.append(next.delta.bytes)
-      acc.append(next.message.data)
+      acc.append(next.trackData)
     }
   }
 }
