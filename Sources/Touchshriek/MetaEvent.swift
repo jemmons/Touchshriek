@@ -12,7 +12,7 @@ public enum MetaEvent: Trackable {
   case lyric(String)
   case marker(String)
   case cuePoint(String)
-  case midiChannel(Int)
+  case midiChannel(Ramona.Channel)
   case endOfTrack
   case setTempo(Int)
   case smpteOffset(SMPTE)
@@ -61,7 +61,7 @@ public enum MetaEvent: Trackable {
          .marker(let s),
          .cuePoint(let s):
       return Data(s.utf8)
-    case .midiChannel(let i): return Data([UInt8(clamping: i)])
+    case .midiChannel(let c): return Data([c.byte])
     case .endOfTrack: return Data()
     case .setTempo(let i):
       return Data([

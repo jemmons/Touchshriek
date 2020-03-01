@@ -9,18 +9,33 @@ public struct Track: Chunk {
   public var chunkLength: UInt32 {
     UInt32(clamping: midiStream.count)
   }
-  private let midiStream: Data
+  private var midiStream: Data
+  private var runningStatus: UInt8?
   
   
   public init(packetHash: TrackableHash) {
     let sortedTimeStamps = packetHash.keys.sorted()
     var runningTimeStamp = RunningDelta(initial: MIDITimeStamp.zero)
+    midiStream = Data()
     
     midiStream = sortedTimeStamps.flatMap { (timeStamp) -> [Event] in
       (packetHash[timeStamp] ?? []).map { message in
         let delta = runningTimeStamp.delta(to: timeStamp)
         let vlq = VariableLengthQuantity(Int(delta))
-        return (delta: vlq, trackData: message.trackData)
+        var trackData = message.trackData
+        switch message {
+        case Ramona.Message.channel:
+          let status = trackData.first
+          switch status == runningStatus {
+          case true:
+            _ = trackData.popFirst()
+          case false:
+            runningStatus = status
+          }
+        default:
+          runningStatus = nil
+        }
+        return (delta: vlq, trackData: trackData)
       }
     }.reduce(into: Data()) { acc, next in
       acc.append(next.delta.bytes)
