@@ -2,7 +2,8 @@ import Foundation
 import Ramona
 
 
-public struct Header: Chunk {
+
+public struct Header {
   public enum FileType {
     case singleTrack
     case multiTrackSequence
@@ -10,7 +11,7 @@ public struct Header: Chunk {
     
     var data: Data {
       switch self {
-      case .singleTrack: return Data(repeating: 0, count: 2)
+      case .singleTrack: return Data([0x00, 0x00])
       case .multiTrackSequence: return Data([0x00, 0x01])
       case .multiTrackIndependent: return Data([0x00, 0x02])
       }
@@ -18,30 +19,30 @@ public struct Header: Chunk {
   }
   
   
-  public let chunkType = ChunkType.header
-  public var chunkLength = UInt32(6)
   public let fileType: FileType
   public let trackCount: UInt16
   public let division: Division
+  
+  
+  public init(chunk: Chunk) {
+    fileType = .multiTrackIndependent
+    trackCount = 1
+    division = .metrical(ticksPerQuarterNote: 120)
+  }
+  
+  
+  public var chunk: Chunk {
+    var body = fileType.data
+    body.append(word: trackCount)
+    body.append(word: division.word)
+
+    return Chunk(type: .header, body: body)
+  }
   
   
   public init(type: FileType, trackCount: Int, division: Division) {
     fileType = type
     self.trackCount = UInt16(clamping: trackCount)
     self.division = division
-  }
-}
-
-
-
-public extension Header {
-  var data: Data {
-    var buf = Data()
-    buf.append(chunkType.data)
-    buf.append(doubleWord: chunkLength)
-    buf.append(fileType.data)
-    buf.append(word: trackCount)
-    buf.append(word: division.word)
-    return buf
   }
 }

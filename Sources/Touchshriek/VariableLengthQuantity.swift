@@ -1,4 +1,5 @@
 import Foundation
+import Ramona
 
 
 
@@ -21,8 +22,8 @@ public struct VariableLengthQuantity {
 
 
 
-public extension VariableLengthQuantity {
-  var bytes: Data {
+extension VariableLengthQuantity: MultibyteConvertible {
+  public var data: Data {
     var mutableValue = value
     var buf = Data([UInt8(clamping: mutableValue & 0b0111_1111)])
     mutableValue >>= 7

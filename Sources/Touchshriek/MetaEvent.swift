@@ -21,11 +21,13 @@ public enum MetaEvent: Trackable {
   case sequencerSpecific(Data)
   
   
-  
-  
+    
   public var trackData: Data {
     let eventData = data
-    return Data([0xFF, type]) + VariableLengthQuantity(eventData.count).bytes + eventData
+    var buf = Data([0xFF, type])
+    buf.append(VariableLengthQuantity(eventData.count).data)
+    buf.append(eventData)
+    return buf
   }
 
   
