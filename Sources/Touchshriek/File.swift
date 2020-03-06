@@ -27,6 +27,8 @@ public struct File {
     tracks = try chunks.dropFirst().map(Track.init(chunk:))
     
     guard header.trackCount == tracks.count else {
+      print(header.trackCount)
+      print(tracks.count)
       throw Error.trackCountMismatch
     }
   }
@@ -55,7 +57,7 @@ private enum Helper {
     }
 
     let chunkType = try Chunk.ChunkType(data: data.prefix(4))
-    let length: UInt32 = data.dropFirst(4).prefix(4).reduce(0) { $0 << 8 | UInt32($1) }
+    let length: UInt32 = try data.dropFirst(4).parse()
     guard data.count >= 8 + length else {
       throw File.Error.incompleteChunk
     }

@@ -1,6 +1,16 @@
 import Foundation
 
 
+public enum DataError: LocalizedError {
+  case parseFailure
+  public var errorDescription: String? {
+    switch self {
+    case .parseFailure: return "Unable to parse data into type."
+    }
+  }
+  
+}
+
 
 internal extension Data {
   init(word: UInt16) {
@@ -24,5 +34,14 @@ internal extension Data {
   mutating func append(doubleWord: UInt32) {
     var mutableInt = doubleWord.bigEndian
     append(UnsafeBufferPointer(start: &mutableInt, count: 1))
+  }
+  
+  
+  func parse<T>() throws -> T where T: FixedWidthInteger {
+    let size = MemoryLayout<T>.size
+    guard count >= size else {
+      throw DataError.parseFailure
+    }
+    return prefix(size).reduce(0) { $0 << 8 | T($1) }
   }
 }

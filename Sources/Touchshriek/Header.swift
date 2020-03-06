@@ -9,6 +9,30 @@ public struct Header {
     case multiTrackSequence
     case multiTrackIndependent
     
+    public enum Error: LocalizedError {
+      case unknownType
+      public var errorDescription: String? {
+        switch self {
+        case .unknownType: return "Unknown file type specified."
+        }
+      }
+    }
+    
+    
+    init(data: Data) throws {
+      switch data {
+      case Self.singleTrack.data:
+        self = .singleTrack
+      case Self.multiTrackSequence.data:
+        self = .multiTrackSequence
+      case Self.multiTrackIndependent.data:
+        self = .multiTrackIndependent
+      default:
+        throw Error.unknownType
+      }
+    }
+    
+    
     var data: Data {
       switch self {
       case .singleTrack: return Data([0x00, 0x00])
@@ -24,30 +48,32 @@ public struct Header {
     
     public var errorDescription: String? {
       switch self {
-      case .notHeaderChunk: return "Expected chunk type “MThd”."
+      case .notHeaderChunk: return "Chunk type is not “MThd”."
       }
     }
   }
   
   
   public let fileType: FileType
-  public let trackCount: UInt16
+  public let trackCount: Int
   public let division: Division
   
   
   public init(chunk: Chunk) throws {
-    guard case .header = chunk.type else {
-      throw Error.notHeaderChunk
+    guard
+      case .header = chunk.type,
+      chunk.length == 6 else {
+        throw Error.notHeaderChunk
     }
-    fileType = .multiTrackIndependent
-    trackCount = 1
-    division = .metrical(ticksPerQuarterNote: 120)
+    fileType = try FileType(data: chunk.body.prefix(2))
+    trackCount = try Int(chunk.body.dropFirst(2).parse() as UInt16)
+    division = try Division(data: chunk.body.dropFirst(4).prefix(2))
   }
   
   
   public var chunk: Chunk {
     var body = fileType.data
-    body.append(word: trackCount)
+    body.append(word: UInt16(clamping: trackCount))
     body.append(word: division.word)
 
     return Chunk(type: .header, body: body)
@@ -56,7 +82,7 @@ public struct Header {
   
   public init(type: FileType, trackCount: Int, division: Division) {
     fileType = type
-    self.trackCount = UInt16(clamping: trackCount)
+    self.trackCount = trackCount
     self.division = division
   }
 }
