@@ -5,6 +5,17 @@ import Ramona
 
 
 public struct Track {
+  public enum Error: LocalizedError {
+    case notTrackChunk
+    
+    public var errorDescription: String? {
+      switch self {
+      case .notTrackChunk: return "Expected chunk type “MTrk”."
+      }
+    }
+  }
+
+  
   public var messagesByTimeStamp: TrackableHash
   
   
@@ -14,6 +25,9 @@ public struct Track {
   
   
   public init(chunk: Chunk) throws {
+    guard case .track = chunk.type else {
+      throw Error.notTrackChunk
+    }
     messagesByTimeStamp = [:]
   }
 

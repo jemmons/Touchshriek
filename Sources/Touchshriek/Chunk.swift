@@ -4,8 +4,29 @@ import Ramona
 
 
 public struct Chunk {
+  public enum Error: LocalizedError {
+    case unknownType
+    public var errorDescription: String? {
+      switch self {
+      case .unknownType: return "Unknown type (expected “MThd” or “MTrk”)"
+      }
+    }
+  }
+    
+    
   public enum ChunkType {
     case header, track
+    
+    public init(data: Data) throws {
+      switch data {
+      case Self.header.data:
+        self = .header
+      case Self.track.data:
+        self = .track
+      default:
+        throw Error.unknownType
+      }
+    }
     
     public var data: Data {
       switch self {

@@ -17,6 +17,17 @@ public struct Header {
       }
     }
   }
+
+  
+  public enum Error: LocalizedError {
+    case notHeaderChunk
+    
+    public var errorDescription: String? {
+      switch self {
+      case .notHeaderChunk: return "Expected chunk type “MThd”."
+      }
+    }
+  }
   
   
   public let fileType: FileType
@@ -24,7 +35,10 @@ public struct Header {
   public let division: Division
   
   
-  public init(chunk: Chunk) {
+  public init(chunk: Chunk) throws {
+    guard case .header = chunk.type else {
+      throw Error.notHeaderChunk
+    }
     fileType = .multiTrackIndependent
     trackCount = 1
     division = .metrical(ticksPerQuarterNote: 120)
