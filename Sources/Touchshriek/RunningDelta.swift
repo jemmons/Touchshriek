@@ -3,23 +3,29 @@ import CoreMIDI
 
 
 
-public struct RunningDelta<Value> where Value: AdditiveArithmetic {
-  private var value: Value
+public struct RunningTotal<Value> where Value: AdditiveArithmetic {
+  private var total: Value
   
   public init() {
-    value = Value.zero
+    self.init(initial: Value.zero)
   }
   
   
   public init(initial: Value) {
-    value = initial
+    total = initial
   }
   
   
   public mutating func delta(to next: Value) -> Value {
     defer {
-      value = next
+      total = next
     }
-    return next - value
+    return next - total
+  }
+  
+  
+  public mutating func total(adding: Value) -> Value {
+    total += adding
+    return total
   }
 }

@@ -19,9 +19,9 @@ internal extension Data {
   }
 
   
-  init(doubleWord: UInt32) {
-    var mutableDoubleWord = doubleWord.bigEndian
-    self.init(bytes: &mutableDoubleWord, count: MemoryLayout<UInt32>.size)
+  init(long: UInt32) {
+    var mutableLong = long.bigEndian
+    self.init(bytes: &mutableLong, count: MemoryLayout<UInt32>.size)
   }
   
   
@@ -31,8 +31,8 @@ internal extension Data {
   }
   
   
-  mutating func append(doubleWord: UInt32) {
-    var mutableInt = doubleWord.bigEndian
+  mutating func append(long: UInt32) {
+    var mutableInt = long.bigEndian
     append(UnsafeBufferPointer(start: &mutableInt, count: 1))
   }
   

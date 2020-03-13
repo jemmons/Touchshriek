@@ -12,8 +12,8 @@ public struct VariableLengthQuantity {
   }
   
   
-  public init(bytes: Data) {
-    value = bytes.reduce(into: 0) { acc, next in
+  public init(data: Data) {
+    value = data.reduce(into: 0) { acc, next in
       acc <<= 7
       acc |= Int(next & 0b0111_1111)
     }

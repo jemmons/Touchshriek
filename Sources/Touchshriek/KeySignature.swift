@@ -4,6 +4,16 @@ import Ramona
 
 
 public enum KeySignature: MultibyteConvertible {
+  public enum Error: LocalizedError {
+    case unrecognized
+    public var errorDescription: String? {
+      switch self {
+      case .unrecognized: return "Unrecognized key signature."
+      }
+    }
+  }
+  
+  
   case cFlatMaj
   case gFlatMaj
   case dFlatMaj
@@ -35,6 +45,44 @@ public enum KeySignature: MultibyteConvertible {
   case gSharpMin
   case dSharpMin
   case aSharpMin
+  
+  
+  public init(data: Data) throws {
+    switch data {
+    case Self.cFlatMaj.data: self = .cFlatMaj
+    case Self.gFlatMaj.data: self = .gFlatMaj
+    case Self.dFlatMaj.data: self = .dFlatMaj
+    case Self.aFlatMaj.data: self = .aFlatMaj
+    case Self.eFlatMaj.data: self = .eFlatMaj
+    case Self.bFlatMaj.data: self = .bFlatMaj
+    case Self.fMaj.data: self = .fMaj
+    case Self.cMaj.data: self = .cMaj
+    case Self.gMaj.data: self = .gMaj
+    case Self.dMaj.data: self = .dMaj
+    case Self.aMaj.data: self = .aMaj
+    case Self.eMaj.data: self = .eMaj
+    case Self.bMaj.data: self = .bMaj
+    case Self.fSharpMaj.data: self = .fSharpMaj
+    case Self.cSharpMaj.data: self = .cSharpMaj
+    case Self.aFlatMin.data: self = .aFlatMin
+    case Self.eFlatMin.data: self = .eFlatMin
+    case Self.bFlatMin.data: self = .bFlatMin
+    case Self.fMin.data: self = .fMin
+    case Self.cMin.data: self = .cMin
+    case Self.gMin.data: self = .gMin
+    case Self.dMin.data: self = .dMin
+    case Self.aMin.data: self = .aMin
+    case Self.eMin.data: self = .eMin
+    case Self.bMin.data: self = .bMin
+    case Self.fSharpMin.data: self = .fSharpMin
+    case Self.cSharpMin.data: self = .cSharpMin
+    case Self.gSharpMin.data: self = .gSharpMin
+    case Self.dSharpMin.data: self = .dSharpMin
+    case Self.aSharpMin.data: self = .aSharpMin
+    default:
+      throw Error.unrecognized
+    }
+  }
   
   
   public var data: Data {

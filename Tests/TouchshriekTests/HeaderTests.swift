@@ -8,7 +8,7 @@ class HeaderTests: XCTestCase {
   
   
   func testReadHeader() {
-    let chunk = Chunk(type: .header, body: headerData.dropFirst(8))
+    let chunk = try! Chunk(data: headerData)
     let subject = try! Header(chunk: chunk)
     XCTAssertEqual(subject.fileType, .multiTrackSequence)
     XCTAssertEqual(subject.division, Division.metrical(ticksPerQuarterNote: 480))
@@ -18,6 +18,6 @@ class HeaderTests: XCTestCase {
   
   func testWriteHeader() {
     let subject = Header(type: .multiTrackSequence, trackCount: 3, division: .metrical(ticksPerQuarterNote: 480))
-    XCTAssertEqual(subject.chunk.data, headerData)
+    XCTAssertEqual(subject.makeChunk().data, headerData)
   }
 }

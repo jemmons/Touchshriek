@@ -71,7 +71,7 @@ public struct Header {
   }
   
   
-  public var chunk: Chunk {
+  public func makeChunk() -> Chunk {
     var body = fileType.data
     body.append(word: UInt16(clamping: trackCount))
     body.append(word: division.word)

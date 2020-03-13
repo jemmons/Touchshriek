@@ -52,7 +52,7 @@ class VariableLengthQuantityTests: XCTestCase {
       Data([0x81, 0x80, 0x80, 0x00]),
       Data([0xC0, 0x80, 0x80, 0x00]),
       Data([0xFF, 0xFF, 0xFF, 0x7F])
-      ].map(VariableLengthQuantity.init(bytes:))
+      ].map(VariableLengthQuantity.init(data:))
     let results = [
       0,
       0x40,
@@ -73,16 +73,16 @@ class VariableLengthQuantityTests: XCTestCase {
   
   func testRoundTrip() {
     (1...100).forEach { it in
-      XCTAssertEqual(it, VariableLengthQuantity(bytes: VariableLengthQuantity(it).data).value)
+      XCTAssertEqual(it, VariableLengthQuantity(data: VariableLengthQuantity(it).data).value)
     }
     (500...600).forEach { it in
-      XCTAssertEqual(it, VariableLengthQuantity(bytes: VariableLengthQuantity(it).data).value)
+      XCTAssertEqual(it, VariableLengthQuantity(data: VariableLengthQuantity(it).data).value)
     }
     (20_000...20_100).forEach { it in
-      XCTAssertEqual(it, VariableLengthQuantity(bytes: VariableLengthQuantity(it).data).value)
+      XCTAssertEqual(it, VariableLengthQuantity(data: VariableLengthQuantity(it).data).value)
     }
     (300_500...300_600).forEach { it in
-      XCTAssertEqual(it, VariableLengthQuantity(bytes: VariableLengthQuantity(it).data).value)
+      XCTAssertEqual(it, VariableLengthQuantity(data: VariableLengthQuantity(it).data).value)
     }
   }
 }
